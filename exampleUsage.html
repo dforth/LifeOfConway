@@ -1,0 +1,36 @@
+<html>
+	<head>
+		<title>Example Usage - LifeOfConway</title>
+		
+		<style>
+			
+			.game-container {
+				
+				background: #9d9d9d;
+				border: 1px solid black;
+				width:500px;
+				height:500px;				
+			}
+		</style>
+		
+	</head>
+	<body>
+		
+		<header>
+			<h1>Example Usage - LifeOfConway</h1>
+		</header>
+		<div id="gameContainer" class="game-container">
+		</div>		
+		
+		<script type="module">
+			
+			import LifeOfConway from './index.js';
+			
+			let engine = new LifeOfConway(100, 100, 'gameContainer');
+			
+			
+			
+		</script>					
+		
+	</body>
+</html>

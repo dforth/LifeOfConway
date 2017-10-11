@@ -1,0 +1,19 @@
+{
+  "name": "life-of-conway",
+  "version": "1.0.0",
+  "description": "Javascript based Game Of Life",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dforth/LifeOfConway.git"
+  },
+  "author": "Donald Forth",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/dforth/LifeOfConway/issues"
+  },
+  "homepage": "https://github.com/dforth/LifeOfConway#readme"
+}
