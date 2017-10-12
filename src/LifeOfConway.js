@@ -96,15 +96,20 @@ class LifeOfConway {
 			//console.log("event: ", event);
 			
 			let cellCoords = this.determineCellCoords(event.clientX, event.clientY);
+			this.toggleCell(cellCoords.x, cellCoords.y);
 		}
 		
-		this.toggleState();
 	}
 	
 	determineCellCoords(clientX, clientY) {
 		
-		//console.log("divRect: ", this.divRect);
+		let x = Math.floor((clientX - Math.floor(this.divRect.left)) / this.xScale);
+		let y = Math.floor((clientY - Math.floor(this.divRect.top)) / this.yScale);
 		
+		return {
+			x: x,
+			y: y
+		};		
 	}
 	
 	toggleState() {
@@ -190,6 +195,8 @@ class LifeOfConway {
 			
 			this.data[x][y] = 1;
 		}
+		
+		this.draw();
 	}
 	
 	clear() {
