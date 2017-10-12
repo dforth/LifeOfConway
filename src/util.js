@@ -17,3 +17,10 @@ export function createDataArray(width, height) {
 		
 	return result;
 }
+
+export function getDivRect(divId) {
+	
+	let div = document.getElementById(divId);
+	
+	return div.getBoundingClientRect();
+}

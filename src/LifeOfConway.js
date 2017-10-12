@@ -1,33 +1,52 @@
-import * as util from './src/util.js';
+import * as util from './Util.js';
 
 
 class LifeOfConway {
 	
-	constructor(width, height, containerId, wrapFlag) {
+	constructor(divId, width, height, showGrid) {
 	
+		this.divRect = util.getDivRect(divId);
+		this.showGrid = showGrid;
 		this.width = width;
+		
+		if (this.width > this.divRect.width) {
+			
+			this.width = this.divRect.width;
+		}
+		
 		this.height = height;	
+		
+		if (this.height > this.divRect.height) {
+			
+			this.height = this.divRect.height;
+		}
+		
+		this.xScale = this.divRect.width / this.width;
+		this.yScale = this.divRect.height / this.height;
+		
+		this.cellColor = "#000000";
+		this.gridColor = "#333333";
+		
 		this.running = false;
 		this.cycle = 0;
-		this.wrapFlag = wrapFlag
 		
 		// add a canvas to the container
-		let container = document.getElementById(containerId);
+		let div = document.getElementById(divId);
 		
 		var canvas = document.createElement('canvas');
 		
-		let canvasId = containerId + '-canvas';
+		let canvasId = divId + '-canvas';
 		this.canvasId = canvasId;
         canvas.id = canvasId;
-        canvas.width = this.width;
-        canvas.height = this.height;
+        canvas.width = this.divRect.width;
+        canvas.height = this.divRect.height;
         //canvas.style.zIndex   = 8;
         //canvas.style.position = "absolute";
         //canvas.style.border   = "1px solid";
         //canvas.style.background = "red";
         canvas.style.width = '100%';
         canvas.style.height = '100%';
-        container.appendChild(canvas);
+        div.appendChild(canvas);
 		
 		
 		// Create the data array
@@ -37,7 +56,7 @@ class LifeOfConway {
 		this.draw();
 		//this.step();
 		
-		canvas.addEventListener('click', this.toggle.bind(this), false);
+		canvas.addEventListener('click', this.clickHandler.bind(this), false);
 	}
 	
 	
@@ -70,7 +89,25 @@ class LifeOfConway {
 		return count;
 	}	
 	
-	toggle() {
+	clickHandler(event) {
+		
+		if (event) {
+			
+			//console.log("event: ", event);
+			
+			let cellCoords = this.determineCellCoords(event.clientX, event.clientY);
+		}
+		
+		this.toggleState();
+	}
+	
+	determineCellCoords(clientX, clientY) {
+		
+		//console.log("divRect: ", this.divRect);
+		
+	}
+	
+	toggleState() {
 		
 		if (this.running) {
 			
@@ -143,6 +180,18 @@ class LifeOfConway {
 		}
 	}
 	
+	toggleCell(x,y) {
+		
+		if (this.data[x][y]) {
+		
+			this.data[x][y] = 0;			
+			
+		} else {
+			
+			this.data[x][y] = 1;
+		}
+	}
+	
 	clear() {
 
 		
@@ -171,7 +220,8 @@ class LifeOfConway {
 	
 		let canvas = document.getElementById(this.canvasId);
 		let ctx = canvas.getContext("2d");
-		ctx.fillStyle = "#000000";
+
+		ctx.fillStyle = this.cellColor;
 		
 		for(var x=0; x<this.width; x++) {
 			
@@ -179,17 +229,45 @@ class LifeOfConway {
 				
 				if (this.data[x][y] == 0) {
 					
-					ctx.clearRect(x, y, x+1, y+1);
+					ctx.clearRect(x * this.xScale, y * this.yScale, (x+1) * this.xScale, (y+1) * this.yScale);
 					
 				} else {
 					
-					ctx.fillRect(x, y, x+1, y+1);			
+					ctx.fillRect(x * this.xScale, y * this.yScale, (x+1) * this.xScale, (y+1) * this.yScale);			
 				}
 			}			
 		}
 		
+		if (this.showGrid) {
+			
+			this.drawGrid(ctx);
+		}
+	}	
+	
+	drawGrid(ctx) {
 		
-	}			
+		ctx.strokeStyle = this.gridColor;
+		
+		for(var x=1; x< this.width; x++) {
+			
+			let xValue = x * this.xScale;
+			
+			ctx.beginPath();
+			ctx.moveTo(xValue, 0);
+			ctx.lineTo(xValue, this.height * this.yScale);
+			ctx.stroke();
+		}	
+		
+		for(var y=1; y< this.height; y++) {
+			
+			let yValue = y * this.yScale;
+			
+			ctx.beginPath();
+			ctx.moveTo(0, yValue);
+			ctx.lineTo(this.width * this.xScale, yValue);
+			ctx.stroke();
+		}
+	}		
 }
 
 export default LifeOfConway;

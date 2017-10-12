@@ -19,14 +19,14 @@
 		<header>
 			<h1>Example Usage - LifeOfConway</h1>
 		</header>
-		<div id="gameContainer" class="game-container">
+		<div id="gameDiv" class="game-container">
 		</div>		
 		
 		<script type="module">
 			
-			import LifeOfConway from './index.js';
+			import LifeOfConway from './src/LifeOfConway.js';
 			
-			let engine = new LifeOfConway(100, 100, 'gameContainer');
+			let engine = new LifeOfConway('gameDiv', 25, 25, true);
 			
 			
 			
