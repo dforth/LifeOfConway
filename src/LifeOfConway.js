@@ -309,6 +309,8 @@ class LifeOfConway {
 						
 			this.run();
 		}
+		
+		this.updateControls();
 	}
 	
 	run() {
