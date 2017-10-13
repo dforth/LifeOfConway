@@ -5,6 +5,9 @@
 
 I wanted a new fun project, so I decided to work with the HTML 5 Canvas and revisit Conway's Game of Life. I have been inspired and fascinated with the Game of Life algorithm since I first saw it in college. I still have an ACM magazine from college that talked about it. The complex and mesmerizing patterns that such a simple set of rules create is amazing.
 
+## Warning
+
+This code will only work in a modern browser that supports ES6 Modules. [Does your browser support this?](http://caniuse.com/#feat=es6-module)
 
 ## Goals
 
