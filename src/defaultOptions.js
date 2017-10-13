@@ -7,8 +7,10 @@ let options = {
 	showGrid: true,
 	cellColor: "#000000",
 	gridColor: "#333333",
+	startWithControlsVisible: false,
 	autoRun: false,
-	stalenessLimit: 20
+	stalenessLimit: 20,
+	runStepDelayMilliseconds: 100
 };
 
 export default options;

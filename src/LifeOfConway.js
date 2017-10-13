@@ -32,10 +32,6 @@ class LifeOfConway {
 		this.xScale = divRect.width / this.options.width;
 		this.yScale = divRect.height / this.options.height;
 		
-		this.running = false;
-		this.cycle = 0;
-		this.staleness = 0;
-		
 		// create and add our canvas
 		let div = document.getElementById(divId);
 		var canvas = document.createElement('canvas');
@@ -47,6 +43,7 @@ class LifeOfConway {
         canvas.height = divRect.height;
         canvas.style.width = '100%';
         canvas.style.height = '100%';
+        canvas.style.cursor = 'pointer';
         div.appendChild(canvas);
         
         let ctx = canvas.getContext("2d");
@@ -57,17 +54,181 @@ class LifeOfConway {
 		this.cellsPlusOne = null;
 		this.cellsPlusTwo = null;
 		
-		this.randomize();
-		this.draw();
 		
 		canvas.addEventListener('click', this.clickHandler.bind(this), false);
 		
+		// Controls
+		
+		this.initControls();
+		
+		if (this.options.startWithControlsVisible) {
+			console.log("here0");
+			this.toggleControls();
+		}
+		
+		// Starting state
+		
+		this.running = false;
+		this.cycle = 0;
+		this.staleness = 0;		
+		
+		this.randomize();
+		this.draw();
+
 		if (this.options.autoRun) {
 			
-			this.run();
+			this.toggleState();
 		}
 	}
 	
+	initControls() {
+		
+		this.controlsVisible = false;
+		
+		let div = document.getElementById(this.divId);
+		
+		let controlDiv = document.createElement('DIV');
+		this.controlsId = this.divId + '_controls';
+		controlDiv.id = this.controlsId;
+		controlDiv.style.width = "100%";
+		controlDiv.style.border = "1px solid black";
+		controlDiv.style.display = "none";
+		
+		let runButton = document.createElement('BUTTON');		
+		this.runButtonId = this.controlsId + "_run_button";
+		runButton.id = this.runButtonId;
+		runButton.appendChild(document.createTextNode('Run'));		
+		runButton.addEventListener('click', this.buttonClickHandler.bind(this), false);
+		
+		controlDiv.appendChild(runButton);
+
+		let stopButton = document.createElement('BUTTON');		
+		this.stopButtonId = this.controlsId + "_stop_button";
+		stopButton.id = this.stopButtonId;
+		stopButton.appendChild(document.createTextNode('Stop'));
+		stopButton.addEventListener('click', this.buttonClickHandler.bind(this), false);
+		
+		controlDiv.appendChild(stopButton);
+		
+		let stepButton = document.createElement('BUTTON');		
+		this.stepButtonId = this.controlsId + "_step_button";
+		stepButton.id = this.stepButtonId;
+		stepButton.appendChild(document.createTextNode('Step'));
+		stepButton.addEventListener('click', this.buttonClickHandler.bind(this), false);
+		
+		controlDiv.appendChild(stepButton);
+		
+		let rndButton = document.createElement('BUTTON');		
+		this.rndButtonId = this.controlsId + "_randomize_button";
+		rndButton.id = this.rndButtonId;
+		rndButton.appendChild(document.createTextNode('Randomize'));
+		rndButton.addEventListener('click', this.buttonClickHandler.bind(this), false);
+		
+		controlDiv.appendChild(rndButton);
+		
+		let clearButton = document.createElement('BUTTON');		
+		this.clearButtonId = this.controlsId + "_clear_button";
+		clearButton.id = this.clearButtonId;
+		clearButton.appendChild(document.createTextNode('Clear'));
+		clearButton.addEventListener('click', this.buttonClickHandler.bind(this), false);
+		
+		controlDiv.appendChild(clearButton);
+		
+		
+		div.appendChild(controlDiv);		
+	}
+	
+	buttonClickHandler(event) {
+		
+		if (event) {
+		
+			let targetId = event.target.id;
+			
+			if (targetId == this.runButtonId) {
+				
+				if (!this.running) {
+					
+					this.run();
+				}
+				
+			} else if (targetId == this.stopButtonId) {
+				
+				if (this.running) {
+					
+					this.stop();
+				}
+				
+			} else if (targetId == this.stepButtonId) {
+				
+				if (this.running) {
+					
+					this.stop();
+				}
+				
+				this.step();
+				
+			} else if (targetId == this.rndButtonId) {
+				
+				this.randomize();
+				this.cycle = 0;
+				this.staleness = 0;
+				this.draw();
+				
+			} else if (targetId == this.clearButtonId) {
+				
+				if (this.running) {
+					
+					this.stop();
+				}
+				
+				this.clear();
+				this.cycle = 0;
+				this.staleness = 0;
+				this.draw();
+			}
+		
+			event.stopPropagation();	
+		}			
+	}
+	
+	toggleControls() {
+		console.log("here1");
+		if (!this.controlsVisible) {
+		
+			this.showControls();
+				
+		} else {
+			
+			this.hideControls();
+		}		
+	}
+	
+	showControls() {
+		console.log("here2");
+		let controls = document.getElementById(this.controlsId);
+		
+		controls.style.display = "block";
+		
+		this.controlsVisible = true;
+	}
+	
+	hideControls() {
+		
+		let controls = document.getElementById(this.controlsId);
+		
+		controls.style.display = "none";
+
+		
+		this.controlsVisible = false;
+	}
+	
+	updateControls() {
+		
+		if (this.controlsVisible) {
+		
+				
+		}		
+	}
 
 	countNeighbors(x, y) {
 		
@@ -103,9 +264,10 @@ class LifeOfConway {
 			// Determine the coords of the cell they clicked on
 			let cellCoords = this.determineCellCoords(event.clientX, event.clientY);
 			// then toggle that cell
-			this.toggleCell(cellCoords.x, cellCoords.y);
+			this.toggleCell(cellCoords.x, cellCoords.y);	
+			
+			event.stopPropagation();
 		}
-		
 	}
 	
 	determineCellCoords(screenX, screenY) {
@@ -152,7 +314,7 @@ class LifeOfConway {
 				}
 			}
 			
-		}.bind(this), 100);
+		}.bind(this), this.options.runStepDelayMilliseconds);
 		
 	}
 	
@@ -225,8 +387,6 @@ class LifeOfConway {
 						newCells[x][y] = 1;
 					}					
 				} 				
-				
-				console.groupEnd();									
 			}			
 		}
 
@@ -269,7 +429,7 @@ class LifeOfConway {
 				this.cells[x][y] = 0;
 			}			
 		}
-	
+		
 	}
 	
 	randomize() {
@@ -280,7 +440,7 @@ class LifeOfConway {
 				
 				this.cells[x][y] = util.getRandomIntInclusive(0, 1);
 			}			
-		}
+		}		
 	}
 	
 	draw() {
