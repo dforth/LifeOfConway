@@ -59,6 +59,11 @@ class LifeOfConway {
 		//this.step();
 		
 		canvas.addEventListener('click', this.clickHandler.bind(this), false);
+		
+		if (this.options.autoRun) {
+			
+			this.run();
+		}
 	}
 	
 	
