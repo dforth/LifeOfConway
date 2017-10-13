@@ -6,7 +6,7 @@
 			
 			.game-container {
 				
-				background: #9d9d9d;
+				background: white;
 				border: 1px solid black;
 				width:500px;
 				height:500px;				
@@ -26,7 +26,11 @@
 			
 			import LifeOfConway from './src/LifeOfConway.js';
 			
-			let engine = new LifeOfConway('gameDiv', 25, 25, true);
+			let engine = new LifeOfConway('gameDiv', {
+				width: 20, 
+				height: 20, 
+				showGrid: true
+			});
 			
 			
 			

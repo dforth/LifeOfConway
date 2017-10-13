@@ -1,56 +1,58 @@
 import * as util from './Util.js';
+import defaultOptions from './defaultOptions.js';
 
 
 class LifeOfConway {
 	
-	constructor(divId, width, height, showGrid) {
+	constructor(divId, userOptions) {
 	
-		this.divRect = util.getDivRect(divId);
-		this.showGrid = showGrid;
-		this.width = width;
-		
-		if (this.width > this.divRect.width) {
+		this.divId = divId;
+	
+		if (userOptions) {
 			
-			this.width = this.divRect.width;
+			this.options = Object.assign(defaultOptions, userOptions);
+			
+		} else {
+			
+			this.options = defaultOptions;
 		}
 		
-		this.height = height;	
+		let divRect = util.getDivRect(divId);
 		
-		if (this.height > this.divRect.height) {
+		if (this.options.width > divRect.width) {
 			
-			this.height = this.divRect.height;
+			this.options.width = divRect.width;
 		}
 		
-		this.xScale = this.divRect.width / this.width;
-		this.yScale = this.divRect.height / this.height;
+		if (this.options.height > divRect.height) {
+			
+			this.options.height = divRect.height;
+		}
 		
-		this.cellColor = "#000000";
-		this.gridColor = "#333333";
+		this.xScale = divRect.width / this.options.width;
+		this.yScale = divRect.height / this.options.height;
 		
 		this.running = false;
 		this.cycle = 0;
 		
-		// add a canvas to the container
+		// create and add our canvas
 		let div = document.getElementById(divId);
-		
 		var canvas = document.createElement('canvas');
 		
 		let canvasId = divId + '-canvas';
 		this.canvasId = canvasId;
         canvas.id = canvasId;
-        canvas.width = this.divRect.width;
-        canvas.height = this.divRect.height;
-        //canvas.style.zIndex   = 8;
-        //canvas.style.position = "absolute";
-        //canvas.style.border   = "1px solid";
-        //canvas.style.background = "red";
+        canvas.width = divRect.width;
+        canvas.height = divRect.height;
         canvas.style.width = '100%';
         canvas.style.height = '100%';
         div.appendChild(canvas);
-		
+        
+        let ctx = canvas.getContext("2d");
+        ctx.clearRect(0, 0, divRect.width, divRect.height);
 		
 		// Create the data array
-		this.data = util.createDataArray(this.width, this.height);
+		this.cells = util.createDataArray(this.options.width, this.options.height);
 		
 		this.randomize();
 		this.draw();
@@ -76,9 +78,9 @@ class LifeOfConway {
 		
 			for(var j = (y - 1); j <= (y + 1); j++) {	
 				
-				if (i >= 0 && i < this.width && j >= 0 && j < this.height) {
+				if (i >= 0 && i < this.options.width && j >= 0 && j < this.options.height) {
 					
-					if (this.data[i][j] > 0 && !(x == i && y == j)) {
+					if (this.cells[i][j] > 0 && !(x == i && y == j)) {
 						
 						count ++;
 					}
@@ -93,22 +95,23 @@ class LifeOfConway {
 		
 		if (event) {
 			
-			//console.log("event: ", event);
-			
+			// Determine the coords of the cell they clicked on
 			let cellCoords = this.determineCellCoords(event.clientX, event.clientY);
+			// then toggle that cell
 			this.toggleCell(cellCoords.x, cellCoords.y);
 		}
 		
 	}
 	
-	determineCellCoords(clientX, clientY) {
-		
-		let x = Math.floor((clientX - Math.floor(this.divRect.left)) / this.xScale);
-		let y = Math.floor((clientY - Math.floor(this.divRect.top)) / this.yScale);
+	determineCellCoords(screenX, screenY) {
+
+		// The relative position of the div could have changed - so get this each time we need it.	
+		// We do not allow for the size of the div to have changed.
+		let divRect = util.getDivRect(this.divId);
 		
 		return {
-			x: x,
-			y: y
+			x: Math.floor((screenX - Math.floor(divRect.left)) / this.xScale),
+			y: Math.floor((screenY - Math.floor(divRect.top)) / this.yScale)
 		};		
 	}
 	
@@ -140,29 +143,29 @@ class LifeOfConway {
 	
 	step() {
 
-		let newData = util.createDataArray(this.width, this.height);
+		let newCells = util.createDataArray(this.options.width, this.options.height);
 
-		for (var x=0; x<this.width; x++) {
+		for (var x=0; x<this.options.width; x++) {
 			
-			for (var y=0; y<this.height; y++) {
+			for (var y=0; y<this.options.height; y++) {
 				
 				let count = this.countNeighbors(x,y);
-				let oldValue = this.data[x][y];
+				let oldValue = this.cells[x][y];
 								
-				newData[x][y] = 0;
+				newCells[x][y] = 0;
 				
 				if (oldValue == 0) {
 					
 					if (count == 3) {
 						
-						newData[x][y] = 1;
+						newCells[x][y] = 1;
 					}
 					
 				} else {
 
 					if (count == 2 || count == 3) {
 						
-						newData[x][y] = oldValue + 1;
+						newCells[x][y] = oldValue + 1;
 					}					
 				} 				
 				
@@ -170,7 +173,7 @@ class LifeOfConway {
 			}			
 		}
 
-		this.data = newData;	
+		this.cells = newCells;	
 		
 		this.draw();	
 	}
@@ -187,13 +190,13 @@ class LifeOfConway {
 	
 	toggleCell(x,y) {
 		
-		if (this.data[x][y]) {
+		if (this.cells[x][y]) {
 		
-			this.data[x][y] = 0;			
+			this.cells[x][y] = 0;			
 			
 		} else {
 			
-			this.data[x][y] = 1;
+			this.cells[x][y] = 1;
 		}
 		
 		this.draw();
@@ -202,11 +205,11 @@ class LifeOfConway {
 	clear() {
 
 		
-		for(var x=0; x<this.width; x++) {
+		for(var x=0; x<this.options.width; x++) {
 			
-			for(var y=0; y<this.height; y++) {
+			for(var y=0; y<this.options.height; y++) {
 				
-				this.data[x][y] = 0;
+				this.cells[x][y] = 0;
 			}			
 		}
 	
@@ -214,11 +217,11 @@ class LifeOfConway {
 	
 	randomize() {
 		
-		for(var x=0; x<this.width; x++) {
+		for(var x=0; x<this.options.width; x++) {
 			
-			for(var y=0; y<this.height; y++) {
+			for(var y=0; y<this.options.height; y++) {
 				
-				this.data[x][y] = util.getRandomIntInclusive(0, 1);
+				this.cells[x][y] = util.getRandomIntInclusive(0, 1);
 			}			
 		}
 	}
@@ -228,13 +231,13 @@ class LifeOfConway {
 		let canvas = document.getElementById(this.canvasId);
 		let ctx = canvas.getContext("2d");
 
-		ctx.fillStyle = this.cellColor;
+		ctx.fillStyle = this.options.cellColor;
 		
-		for(var x=0; x<this.width; x++) {
+		for(var x=0; x<this.options.width; x++) {
 			
-			for(var y=0; y<this.height; y++) {
+			for(var y=0; y<this.options.height; y++) {
 				
-				if (this.data[x][y] == 0) {
+				if (this.cells[x][y] == 0) {
 					
 					ctx.clearRect(x * this.xScale, y * this.yScale, (x+1) * this.xScale, (y+1) * this.yScale);
 					
@@ -245,33 +248,33 @@ class LifeOfConway {
 			}			
 		}
 		
-		if (this.showGrid) {
-			
+		if (this.options.showGrid) {
+
 			this.drawGrid(ctx);
 		}
 	}	
 	
 	drawGrid(ctx) {
 		
-		ctx.strokeStyle = this.gridColor;
+		ctx.strokeStyle = this.options.gridColor;
 		
-		for(var x=1; x< this.width; x++) {
+		for(var x=1; x< this.options.width; x++) {
 			
 			let xValue = x * this.xScale;
 			
 			ctx.beginPath();
 			ctx.moveTo(xValue, 0);
-			ctx.lineTo(xValue, this.height * this.yScale);
+			ctx.lineTo(xValue, this.options.height * this.yScale);
 			ctx.stroke();
 		}	
 		
-		for(var y=1; y< this.height; y++) {
+		for(var y=1; y< this.options.height; y++) {
 			
 			let yValue = y * this.yScale;
 			
 			ctx.beginPath();
 			ctx.moveTo(0, yValue);
-			ctx.lineTo(this.width * this.xScale, yValue);
+			ctx.lineTo(this.options.width * this.xScale, yValue);
 			ctx.stroke();
 		}
 	}		
