@@ -34,6 +34,7 @@ class LifeOfConway {
 		
 		this.running = false;
 		this.cycle = 0;
+		this.staleness = 0;
 		
 		// create and add our canvas
 		let div = document.getElementById(divId);
@@ -53,10 +54,11 @@ class LifeOfConway {
 		
 		// Create the data array
 		this.cells = util.createDataArray(this.options.width, this.options.height);
+		this.cellsPlusOne = null;
+		this.cellsPlusTwo = null;
 		
 		this.randomize();
 		this.draw();
-		//this.step();
 		
 		canvas.addEventListener('click', this.clickHandler.bind(this), false);
 		
@@ -65,8 +67,6 @@ class LifeOfConway {
 			this.run();
 		}
 	}
-	
-	
 	
 
 	countNeighbors(x, y) {
@@ -142,11 +142,63 @@ class LifeOfConway {
 			this.step();
 			this.cycle = this.cycle + 1;
 			
+			if (this.options.autoRun) {
+				
+				if (this.checkForStaleness()) {
+					
+					this.randomize();
+					this.cycle = 0;
+					this.staleness = 0;
+				}
+			}
+			
 		}.bind(this), 100);
 		
 	}
 	
+	cellsAreEqual(cellsOne, cellsTwo) {
+		
+		if(cellsOne != null && cellsTwo != null) {
+			
+			for (var x=0; x<this.options.width; x++) {
+			
+				for (var y=0; y<this.options.height; y++) {
+					
+					if (cellsOne[x][y] != cellsTwo[x][y]) {
+						
+						return false;
+					}
+				}
+			}
+			
+			return true;
+		}
+		
+		return false;
+	}
+	
+	checkForStaleness() {
+		
+		if (this.cellsAreEqual(this.cells, this.cellsPlusOne) || this.cellsAreEqual(this.cells, this.cellsPlusTwo)) {
+			
+			this.staleness = this.staleness + 1;
+			
+		} else {
+			
+			this.staleness = 0;
+		}
+		
+		return (this.staleness > this.options.stalenessLimit);			
+	}
+	
 	step() {
+
+		if (this.cellsPlusOne != null) {
+			
+			this.cellsPlusTwo = this.cellsPlusOne;
+		}
+		
+		this.cellsPlusOne = this.cells;
 
 		let newCells = util.createDataArray(this.options.width, this.options.height);
 
@@ -170,7 +222,7 @@ class LifeOfConway {
 
 					if (count == 2 || count == 3) {
 						
-						newCells[x][y] = oldValue + 1;
+						newCells[x][y] = 1;
 					}					
 				} 				
 				
@@ -178,7 +230,7 @@ class LifeOfConway {
 			}			
 		}
 
-		this.cells = newCells;	
+		this.cells = newCells;
 		
 		this.draw();	
 	}
