@@ -54,11 +54,10 @@ class LifeOfConway {
 		this.cellsPlusOne = null;
 		this.cellsPlusTwo = null;
 		
+		canvas.addEventListener('click', this.buttonClickHandler.bind(this), false);
 		
-		canvas.addEventListener('click', this.clickHandler.bind(this), false);
 		
-		// Controls
-		
+		// Controls		
 		this.initControls();
 		
 		if (this.options.startWithControlsVisible) {
@@ -93,6 +92,8 @@ class LifeOfConway {
 		controlDiv.style.width = "100%";
 		controlDiv.style.border = "1px solid black";
 		controlDiv.style.display = "none";
+		controlDiv.style['flex-flow'] = "row nowrap";
+		controlDiv.style['justify-content'] = "space-around";
 		
 		let runButton = document.createElement('BUTTON');		
 		this.runButtonId = this.controlsId + "_run_button";
@@ -134,8 +135,7 @@ class LifeOfConway {
 		
 		controlDiv.appendChild(clearButton);
 		
-		
-		div.appendChild(controlDiv);		
+		div.appendChild(controlDiv);				
 	}
 	
 	buttonClickHandler(event) {
@@ -144,7 +144,24 @@ class LifeOfConway {
 		
 			let targetId = event.target.id;
 			
-			if (targetId == this.runButtonId) {
+			if (targetId == this.canvasId) {
+				
+				// With ALT?
+				if (event.altKey) {
+					
+					this.toggleControls();
+					
+				} else {
+					
+					// Determine the coords of the cell they clicked on
+					let cellCoords = this.determineCellCoords(event.clientX, event.clientY);
+					// then toggle that cell
+					this.toggleCell(cellCoords.x, cellCoords.y);	
+			
+					event.stopPropagation();	
+				}
+				
+			} else if (targetId == this.runButtonId) {
 				
 				if (!this.running) {
 					
@@ -187,15 +204,17 @@ class LifeOfConway {
 				this.draw();
 			}
 		
+			this.updateControls();
 			event.stopPropagation();	
 		}			
 	}
 	
 	toggleControls() {
-		console.log("here1");
+		
 		if (!this.controlsVisible) {
 		
 			this.showControls();
+			this.updateControls();
 				
 		} else {
 			
@@ -204,10 +223,10 @@ class LifeOfConway {
 	}
 	
 	showControls() {
-		console.log("here2");
+		
 		let controls = document.getElementById(this.controlsId);
 		
-		controls.style.display = "block";
+		controls.style.display = "flex";
 		
 		this.controlsVisible = true;
 	}
@@ -226,7 +245,18 @@ class LifeOfConway {
 		
 		if (this.controlsVisible) {
 		
+			if (this.running) {
 				
+				util.enable(this.stopButtonId);
+				util.disable(this.runButtonId);
+				util.disable(this.stepButtonId);
+				
+			} else {
+				
+				util.disable(this.stopButtonId);
+				util.enable(this.runButtonId);
+				util.enable(this.stepButtonId);				
+			}			
 		}		
 	}
 
@@ -256,19 +286,6 @@ class LifeOfConway {
 		
 		return count;
 	}	
-	
-	clickHandler(event) {
-		
-		if (event) {
-			
-			// Determine the coords of the cell they clicked on
-			let cellCoords = this.determineCellCoords(event.clientX, event.clientY);
-			// then toggle that cell
-			this.toggleCell(cellCoords.x, cellCoords.y);	
-			
-			event.stopPropagation();
-		}
-	}
 	
 	determineCellCoords(screenX, screenY) {
 

@@ -6,7 +6,7 @@
 			
 			.game-container {
 				
-				background: white;
+				background: lightgray;
 				border: 1px solid black;
 				width:500px;
 				height:500px;				
@@ -33,10 +33,12 @@
 			
 			let engine = new LifeOfConway('gameDiv', {
 				width: 30, 
-				height: 30, 
+				height: 30,
+				cellColor: "purple",
+				gridColor: "blue",
 				showGrid: true,
 				autoRun: true,
-				startWithControlsVisible: false
+				startWithControlsVisible: true
 			});
 			
 			

@@ -24,3 +24,17 @@ export function getDivRect(divId) {
 	
 	return div.getBoundingClientRect();
 }
+
+export function enable(elementId) {
+	
+	let element = document.getElementById(elementId);
+	
+	element.disabled = false;
+}
+
+export function disable(elementId) {
+	
+	let element = document.getElementById(elementId);	
+	
+	element.disabled = true;
+}
