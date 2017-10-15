@@ -2,17 +2,6 @@
 	<head>
 		<title>Example Usage - LifeOfConway</title>
 		
-		<style>
-			
-			.game-container {
-				
-				background: lightgray;
-				border: 1px solid black;
-				width:500px;
-				height:500px;				
-			}
-		</style>
-		
 	</head>
 	<body>
 		
@@ -24,14 +13,19 @@
 			This code will only work in a modern browser that supports ES6 Modules. <a href="http://caniuse.com/#feat=es6-module">Does your browser support this?</a>
 		</p>
 		
-		<div id="gameDiv" class="game-container">
+		<div id="exampleOne" style="background: lightgray; width:500px; height:500px;">
+		</div>		
+		
+		<br/><br/>
+		
+		<div id="exampleTwo" style="background: lightgray; width:1000px; height:500px;">
 		</div>		
 		
 		<script type="module">
 			
 			import LifeOfConway from './src/LifeOfConway.js';
 			
-			let engine = new LifeOfConway('gameDiv', {
+			let gameOne = new LifeOfConway('exampleOne', {
 				width: 30, 
 				height: 30,
 				cellColor: "purple",
@@ -39,6 +33,16 @@
 				showGrid: true,
 				autoRun: true,
 				startWithControlsVisible: true
+			});
+			
+			let gameTwo = new LifeOfConway('exampleTwo', {
+				width: 60, 
+				height: 30,
+				cellColor: "red",
+				gridColor: "black",
+				showGrid: true,
+				autoRun: true,
+				startWithControlsVisible: false
 			});
 			
 			

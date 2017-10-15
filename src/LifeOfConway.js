@@ -8,14 +8,13 @@ class LifeOfConway {
 	
 		this.divId = divId;
 	
+		this.options = Object.assign({}, defaultOptions);
+	
 		if (userOptions) {
 			
-			this.options = Object.assign(defaultOptions, userOptions);
+			this.options = Object.assign(this.options, userOptions);
 			
-		} else {
-			
-			this.options = defaultOptions;
-		}
+		} 
 		
 		let divRect = util.getDivRect(divId);
 		
@@ -34,7 +33,7 @@ class LifeOfConway {
 		
 		// create and add our canvas
 		let div = document.getElementById(divId);
-		var canvas = document.createElement('canvas');
+		let canvas = document.createElement('canvas');
 		
 		let canvasId = divId + '-canvas';
 		this.canvasId = canvasId;
@@ -51,6 +50,7 @@ class LifeOfConway {
 		
 		// Create the data array
 		this.cells = util.createDataArray(this.options.width, this.options.height);
+		console.log("myCells: ", this.cells);
 		this.cellsPlusOne = null;
 		this.cellsPlusTwo = null;
 		
@@ -263,16 +263,16 @@ class LifeOfConway {
 	countNeighbors(x, y) {
 		
 		let count = 0;
-		
+
 		//
 		// [x - 1 ,y - 1] [x, y - 1] [x + 1, y - 1]
 		// [x - 1, y] [x, y] [x + 1, y]
 		// [x - 1, y + 1] [x, y + 1] [x + 1, y + 1]
 		//
 		
-		for(var i = (x - 1); i <= (x + 1); i++) {
+		for(let i = (x - 1); i <= (x + 1); i++) {
 		
-			for(var j = (y - 1); j <= (y + 1); j++) {	
+			for(let j = (y - 1); j <= (y + 1); j++) {	
 				
 				if (i >= 0 && i < this.options.width && j >= 0 && j < this.options.height) {
 					
@@ -341,9 +341,9 @@ class LifeOfConway {
 		
 		if(cellsOne != null && cellsTwo != null) {
 			
-			for (var x=0; x<this.options.width; x++) {
+			for (let x=0; x<this.options.width; x++) {
 			
-				for (var y=0; y<this.options.height; y++) {
+				for (let y=0; y<this.options.height; y++) {
 					
 					if (cellsOne[x][y] != cellsTwo[x][y]) {
 						
@@ -383,9 +383,9 @@ class LifeOfConway {
 
 		let newCells = util.createDataArray(this.options.width, this.options.height);
 
-		for (var x=0; x<this.options.width; x++) {
+		for (let x=0; x<this.options.width; x++) {
 			
-			for (var y=0; y<this.options.height; y++) {
+			for (let y=0; y<this.options.height; y++) {
 				
 				let count = this.countNeighbors(x,y);
 				let oldValue = this.cells[x][y];
@@ -441,9 +441,9 @@ class LifeOfConway {
 	clear() {
 
 		
-		for(var x=0; x<this.options.width; x++) {
+		for(let x=0; x<this.options.width; x++) {
 			
-			for(var y=0; y<this.options.height; y++) {
+			for(let y=0; y<this.options.height; y++) {
 				
 				this.cells[x][y] = 0;
 			}			
@@ -453,9 +453,9 @@ class LifeOfConway {
 	
 	randomize() {
 		
-		for(var x=0; x<this.options.width; x++) {
+		for(let x=0; x<this.options.width; x++) {
 			
-			for(var y=0; y<this.options.height; y++) {
+			for(let y=0; y<this.options.height; y++) {
 				
 				this.cells[x][y] = util.getRandomIntInclusive(0, 1);
 			}			
@@ -469,9 +469,9 @@ class LifeOfConway {
 
 		ctx.fillStyle = this.options.cellColor;
 		
-		for(var x=0; x<this.options.width; x++) {
+		for(let x=0; x<this.options.width; x++) {
 			
-			for(var y=0; y<this.options.height; y++) {
+			for(let y=0; y<this.options.height; y++) {
 				
 				if (this.cells[x][y] == 0) {
 					
@@ -494,7 +494,7 @@ class LifeOfConway {
 		
 		ctx.strokeStyle = this.options.gridColor;
 		
-		for(var x=1; x< this.options.width; x++) {
+		for(let x=1; x< this.options.width; x++) {
 			
 			let xValue = x * this.xScale;
 			
@@ -504,7 +504,7 @@ class LifeOfConway {
 			ctx.stroke();
 		}	
 		
-		for(var y=1; y< this.options.height; y++) {
+		for(let y=1; y< this.options.height; y++) {
 			
 			let yValue = y * this.yScale;
 			
