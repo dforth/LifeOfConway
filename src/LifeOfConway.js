@@ -321,7 +321,7 @@ class LifeOfConway {
 			this.step();
 			this.cycle = this.cycle + 1;
 			
-			if (this.options.autoRun) {
+			if (this.options.stalenessCheck) {
 				
 				if (this.checkForStaleness()) {
 					
@@ -372,12 +372,15 @@ class LifeOfConway {
 	
 	step() {
 
-		if (this.cellsPlusOne != null) {
+		if (this.options.stalenessCheck) {
 			
-			this.cellsPlusTwo = this.cellsPlusOne;
+			if (this.cellsPlusOne != null) {
+				
+				this.cellsPlusTwo = this.cellsPlusOne;
+			}
+			
+			this.cellsPlusOne = this.cells;			
 		}
-		
-		this.cellsPlusOne = this.cells;
 
 		let newCells = util.createDataArray(this.options.width+2, this.options.height+2);
 

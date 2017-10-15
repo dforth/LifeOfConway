@@ -8,7 +8,8 @@ let options = {
 	cellColor: "#000000",
 	gridColor: "#333333",
 	startWithControlsVisible: false,
-	autoRun: false,
+	autoRun: true,
+	stalenessCheck: true,
 	stalenessLimit: 20,
 	runStepDelayMilliseconds: 100
 };
