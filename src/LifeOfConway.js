@@ -49,8 +49,8 @@ class LifeOfConway {
         ctx.clearRect(0, 0, divRect.width, divRect.height);
 		
 		// Create the data array
-		this.cells = util.createDataArray(this.options.width, this.options.height);
-		console.log("myCells: ", this.cells);
+		// Note: we create it slightly larget so that we have a dead border
+		this.cells = util.createDataArray(this.options.width + 2, this.options.height + 2);
 		this.cellsPlusOne = null;
 		this.cellsPlusTwo = null;
 		
@@ -61,7 +61,7 @@ class LifeOfConway {
 		this.initControls();
 		
 		if (this.options.startWithControlsVisible) {
-			console.log("here0");
+
 			this.toggleControls();
 		}
 		
@@ -259,7 +259,7 @@ class LifeOfConway {
 			}			
 		}		
 	}
-
+	
 	countNeighbors(x, y) {
 		
 		let count = 0;
@@ -270,22 +270,61 @@ class LifeOfConway {
 		// [x - 1, y + 1] [x, y + 1] [x + 1, y + 1]
 		//
 		
-		for(let i = (x - 1); i <= (x + 1); i++) {
-		
-			for(let j = (y - 1); j <= (y + 1); j++) {	
+		/*
+		if (y > 0) {
+			
+			if (x > 0) {
 				
-				if (i >= 0 && i < this.options.width && j >= 0 && j < this.options.height) {
-					
-					if (this.cells[i][j] > 0 && !(x == i && y == j)) {
-						
-						count ++;
-					}
-				}
-			}			
+				count = count + this.cells[x - 1][y - 1];				
+			}
+	
+			count = count + this.cells[x][y - 1];
+			
+			if (x < (this.options.width - 1)) {
+				
+				count = count + this.cells[x + 1][y - 1];							
+			}
 		}
+
+		if (x > 0) {
+			
+			count = count + this.cells[x - 1][y];			
+		}		
+
+		if (x < (this.options.width - 1)) {
+			
+			count = count + this.cells[x + 1][y];
+		}
+	
+		if (y < (this.options.height - 1)) {
+
+			if (x > 0) {
+		 		count = count + this.cells[x - 1][y + 1];				
+			}			
+			
+	 		count = count + this.cells[x][y + 1];
+	 		
+	 		if (x < (this.options.width - 1)) {
+		 		
+		 		count = count + this.cells[x + 1][y + 1];		 		
+	 		}
+	 	}
+	 	*/
+	 	
+	 	// Because we have a dead border - we do not have to do any limit tests
+ 		count = count + this.cells[x - 1][y - 1];				
+		count = count + this.cells[x][y - 1];
+		count = count + this.cells[x + 1][y - 1];							
+	
+		count = count + this.cells[x - 1][y];			
+		count = count + this.cells[x + 1][y];
+	
+	 	count = count + this.cells[x - 1][y + 1];				
+		count = count + this.cells[x][y + 1];
+ 	 	count = count + this.cells[x + 1][y + 1];		 		
 		
-		return count;
-	}	
+		return count;		
+	}
 	
 	determineCellCoords(screenX, screenY) {
 
@@ -341,9 +380,9 @@ class LifeOfConway {
 		
 		if(cellsOne != null && cellsTwo != null) {
 			
-			for (let x=0; x<this.options.width; x++) {
+			for (let x=1; x<=this.options.width; x++) {
 			
-				for (let y=0; y<this.options.height; y++) {
+				for (let y=1; y<=this.options.height; y++) {
 					
 					if (cellsOne[x][y] != cellsTwo[x][y]) {
 						
@@ -381,12 +420,14 @@ class LifeOfConway {
 		
 		this.cellsPlusOne = this.cells;
 
-		let newCells = util.createDataArray(this.options.width, this.options.height);
+		let newCells = util.createDataArray(this.options.width+2, this.options.height+2);
 
-		for (let x=0; x<this.options.width; x++) {
+		//console.time('cycleTime');
+		for (let x=1; x<=this.options.width; x++) {
 			
-			for (let y=0; y<this.options.height; y++) {
+			for (let y=1; y<=this.options.height; y++) {
 				
+				//let count = this.countNeighbors(x,y);
 				let count = this.countNeighbors(x,y);
 				let oldValue = this.cells[x][y];
 								
@@ -408,6 +449,7 @@ class LifeOfConway {
 				} 				
 			}			
 		}
+		//console.timeEnd('cycleTime');
 
 		this.cells = newCells;
 		
@@ -426,13 +468,16 @@ class LifeOfConway {
 	
 	toggleCell(x,y) {
 		
-		if (this.cells[x][y]) {
+		let actualX = x + 1;
+		let actualY = y + 1;
 		
-			this.cells[x][y] = 0;			
+		if (this.cells[actualX][actualY]) {
+		
+			this.cells[actualX][actualY] = 0;			
 			
 		} else {
 			
-			this.cells[x][y] = 1;
+			this.cells[actualX][actualY] = 1;
 		}
 		
 		this.draw();
@@ -441,9 +486,9 @@ class LifeOfConway {
 	clear() {
 
 		
-		for(let x=0; x<this.options.width; x++) {
+		for(let x=1; x<=this.options.width; x++) {
 			
-			for(let y=0; y<this.options.height; y++) {
+			for(let y=1; y<=this.options.height; y++) {
 				
 				this.cells[x][y] = 0;
 			}			
@@ -453,9 +498,9 @@ class LifeOfConway {
 	
 	randomize() {
 		
-		for(let x=0; x<this.options.width; x++) {
+		for(let x=1; x<=this.options.width; x++) {
 			
-			for(let y=0; y<this.options.height; y++) {
+			for(let y=1; y<=this.options.height; y++) {
 				
 				this.cells[x][y] = util.getRandomIntInclusive(0, 1);
 			}			
@@ -473,7 +518,7 @@ class LifeOfConway {
 			
 			for(let y=0; y<this.options.height; y++) {
 				
-				if (this.cells[x][y] == 0) {
+				if (this.cells[x+1][y+1] == 0) {
 					
 					ctx.clearRect(x * this.xScale, y * this.yScale, (x+1) * this.xScale, (y+1) * this.yScale);
 					
