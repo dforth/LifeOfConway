@@ -269,47 +269,6 @@ class LifeOfConway {
 		// [x - 1, y] [x, y] [x + 1, y]
 		// [x - 1, y + 1] [x, y + 1] [x + 1, y + 1]
 		//
-		
-		/*
-		if (y > 0) {
-			
-			if (x > 0) {
-				
-				count = count + this.cells[x - 1][y - 1];				
-			}
-	
-			count = count + this.cells[x][y - 1];
-			
-			if (x < (this.options.width - 1)) {
-				
-				count = count + this.cells[x + 1][y - 1];							
-			}
-		}
-
-		if (x > 0) {
-			
-			count = count + this.cells[x - 1][y];			
-		}		
-
-		if (x < (this.options.width - 1)) {
-			
-			count = count + this.cells[x + 1][y];
-		}
-	
-		if (y < (this.options.height - 1)) {
-
-			if (x > 0) {
-		 		count = count + this.cells[x - 1][y + 1];				
-			}			
-			
-	 		count = count + this.cells[x][y + 1];
-	 		
-	 		if (x < (this.options.width - 1)) {
-		 		
-		 		count = count + this.cells[x + 1][y + 1];		 		
-	 		}
-	 	}
-	 	*/
 	 	
 	 	// Because we have a dead border - we do not have to do any limit tests
  		count = count + this.cells[x - 1][y - 1];				
