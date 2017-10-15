@@ -494,7 +494,7 @@ class LifeOfConway {
 		
 		ctx.strokeStyle = this.options.gridColor;
 		
-		for(let x=1; x< this.options.width; x++) {
+		for(let x=0; x< this.options.width + 1; x++) {
 			
 			let xValue = x * this.xScale;
 			
@@ -504,7 +504,7 @@ class LifeOfConway {
 			ctx.stroke();
 		}	
 		
-		for(let y=1; y< this.options.height; y++) {
+		for(let y=0; y< this.options.height + 1; y++) {
 			
 			let yValue = y * this.yScale;
 			
