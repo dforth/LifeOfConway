@@ -47,6 +47,7 @@ class LifeOfConway {
         
         let ctx = canvas.getContext("2d");
         ctx.clearRect(0, 0, divRect.width, divRect.height);
+        this.canvasCtx = ctx;
 		
 		// Create the data array
 		// Note: we create it slightly larget so that we have a dead border
@@ -471,10 +472,9 @@ class LifeOfConway {
 	
 	draw() {
 	
-		let canvas = document.getElementById(this.canvasId);
-		let ctx = canvas.getContext("2d");
+		let ctx = this.canvasCtx;
 
-		ctx.fillStyle = this.options.cellColor;
+        ctx.fillStyle = this.options.cellColor;
 		
 		for(let x=0; x<this.options.width; x++) {
 			
