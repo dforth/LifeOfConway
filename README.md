@@ -25,6 +25,7 @@ I wanted a new fun project, so I decided to work with the HTML 5 Canvas and revi
 * Use ES6 natively without transpiling.
 * Use the HTML5 Canvas element.
 * Make it fast without overly complicating it.
+	* Still have a long way to go with this goal.
 
 
 ## Reference
