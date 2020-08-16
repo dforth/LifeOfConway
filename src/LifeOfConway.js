@@ -50,13 +50,11 @@ class LifeOfConway {
         this.canvasCtx = ctx;
 		
 		// Create the data array
-		// Note: we create it slightly larget so that we have a dead border
-		this.cells = util.createDataArray(this.options.width + 2, this.options.height + 2);
+		this.cells = util.createDataArray(this.options.width, this.options.height);
 		this.cellsPlusOne = null;
 		this.cellsPlusTwo = null;
 		
 		canvas.addEventListener('click', this.buttonClickHandler.bind(this), false);
-		
 		
 		// Controls		
 		this.initControls();
@@ -156,6 +154,7 @@ class LifeOfConway {
 					
 					// Determine the coords of the cell they clicked on
 					let cellCoords = this.determineCellCoords(event.clientX, event.clientY);
+					
 					// then toggle that cell
 					this.toggleCell(cellCoords.x, cellCoords.y);	
 			
@@ -262,7 +261,7 @@ class LifeOfConway {
 	}
 	
 	countNeighbors(x, y) {
-		
+
 		let count = 0;
 
 		//
@@ -270,20 +269,23 @@ class LifeOfConway {
 		// [x - 1, y] [x, y] [x + 1, y]
 		// [x - 1, y + 1] [x, y + 1] [x + 1, y + 1]
 		//
-	 	
-	 	// Because we have a dead border - we do not have to do any limit tests
- 		count = count + this.cells[x - 1][y - 1];				
-		count = count + this.cells[x][y - 1];
-		count = count + this.cells[x + 1][y - 1];							
-	
-		count = count + this.cells[x - 1][y];			
-		count = count + this.cells[x + 1][y];
-	
-	 	count = count + this.cells[x - 1][y + 1];				
-		count = count + this.cells[x][y + 1];
- 	 	count = count + this.cells[x + 1][y + 1];		 		
+		var xMinOne = (x - 1 + this.options.width) % this.options.width;
+		var xPlusOne = (x + 1 + this.options.width) % this.options.width;
+		var yMinOne = (y - 1 + this.options.height) % this.options.height;
+		var yPlusOne = (y + 1 + this.options.height) % this.options.height;
 		
-		return count;		
+		count = count + this.cells[xMinOne][yMinOne];
+		count = count + this.cells[x][yMinOne];
+		count = count + this.cells[xPlusOne][yMinOne];
+
+		count = count + this.cells[xMinOne][y];
+		count = count + this.cells[xPlusOne][y];
+
+		count = count + this.cells[xMinOne][yPlusOne];
+		count = count + this.cells[x][yPlusOne];
+		count = count + this.cells[xPlusOne][yPlusOne];
+
+		return count;
 	}
 	
 	determineCellCoords(screenX, screenY) {
@@ -386,11 +388,10 @@ class LifeOfConway {
 		let newCells = util.createDataArray(this.options.width+2, this.options.height+2);
 
 		//console.time('cycleTime');
-		for (let x=1; x<=this.options.width; x++) {
+		for (let x=0; x<this.options.width; x++) {
 			
-			for (let y=1; y<=this.options.height; y++) {
+			for (let y=0; y<this.options.height; y++) {
 				
-				//let count = this.countNeighbors(x,y);
 				let count = this.countNeighbors(x,y);
 				let oldValue = this.cells[x][y];
 								
@@ -431,16 +432,13 @@ class LifeOfConway {
 	
 	toggleCell(x,y) {
 		
-		let actualX = x + 1;
-		let actualY = y + 1;
+		if (this.cells[x][y]) {
 		
-		if (this.cells[actualX][actualY]) {
-		
-			this.cells[actualX][actualY] = 0;			
+			this.cells[x][y] = 0;			
 			
 		} else {
 			
-			this.cells[actualX][actualY] = 1;
+			this.cells[x][y] = 1;
 		}
 		
 		this.draw();
@@ -449,9 +447,9 @@ class LifeOfConway {
 	clear() {
 
 		
-		for(let x=1; x<=this.options.width; x++) {
+		for(let x=0; x<this.options.width; x++) {
 			
-			for(let y=1; y<=this.options.height; y++) {
+			for(let y=0; y<this.options.height; y++) {
 				
 				this.cells[x][y] = 0;
 			}			
@@ -461,9 +459,9 @@ class LifeOfConway {
 	
 	randomize() {
 		
-		for(let x=1; x<=this.options.width; x++) {
+		for(let x=0; x<this.options.width; x++) {
 			
-			for(let y=1; y<=this.options.height; y++) {
+			for(let y=0; y<this.options.height; y++) {
 				
 				this.cells[x][y] = util.getRandomIntInclusive(0, 1);
 			}			
@@ -480,7 +478,7 @@ class LifeOfConway {
 			
 			for(let y=0; y<this.options.height; y++) {
 				
-				if (this.cells[x+1][y+1] == 0) {
+				if (this.cells[x][y] == 0) {
 					
 					ctx.clearRect(x * this.xScale, y * this.yScale, (x+1) * this.xScale, (y+1) * this.yScale);
 					
